@@ -16,9 +16,8 @@ local h = display.contentHeight
  
 
 
- local background = display.newImageRect("background.png", 1280, 720)
- background.x = display.contentCenterX
- background.y = display.contentCenterY
+ local background = display.newImageRect("backgroundcity.png", 1280, 720)
+ 
 
  local plataforma = display.newImageRect("plataforma.png", 1280, 20)
  plataforma.x = display.contentCenterX
