@@ -7,21 +7,31 @@ Quando criança, um jovem tinha como principal diversão saltar e subir coisas e
 Saltar o maior número de edifícios possíveis.
 
 ## Diagrama de navegação
+ 
 
-  1.
-  | Splash Scene | 
-  | ------------ |
-  2.
-  | Menu         | 
-  | ------------ |
-  
-  | Menu           | Function      |
-  | -------------  | ------------- |
-  | Play           | Iniciar o jogo|
-  | Preferences    | On/off áudio  |
-  | Credits        | Autorias      |
-  | Exit           | Sair do jogo  |
+   |1. Splash Scene| 
+   | ------------ |
+
+   |2.Menu          | Function      |
+   | -------------  | ------------- |
+   | Play           | Iniciar o jogo|
+   | Preferences    | On/off áudio  |
+   | Credits        | Autorias      |
+   | Exit           | Sair do jogo  |
+
+   |2.1 Play      | 
+   | ------------ |
+
+   |2.2 Preferências | 
+   | ------------ |
+
+   |2.3 Credits      | 
+   | ------------ |
+
 
 ## Regras
 
 Quanto maior o número de prédios saltados, mais pontos são somados. O jogador só possui uma vida, ou seja se cair de um prédio e chegar ao chão é game over. Não possui check points, depois do game over o jogo volta pro início.
+
+
+
