@@ -9,29 +9,13 @@ Saltar o maior número de edifícios possíveis.
 ## Diagrama de navegação
  
 
-   |1. Splash Scene| 
-   | ------------ |
+ ![Diagrama de navegação](https://drive.google.com/file/d/0B6UtPsgmoYE6Vm51c0RFNVQ5SW8/view) 
 
-   |2.Menu          | Function      |
-   | -------------  | ------------- |
-   | Play           | Iniciar o jogo|
-   | Preferences    | On/off áudio  |
-   | Credits        | Autorias      |
-   | Exit           | Sair do jogo  |
-
-   |2.1 Play      | 
-   | ------------ |
-
-   |2.2 Preferências | 
-   | ------------ |
-
-   |2.3 Credits      | 
-   | ------------ |
-
-
+   
 ## Regras
 
-Quanto maior o número de prédios saltados, mais pontos são somados. O jogador só possui uma vida, ou seja se cair de um prédio e chegar ao chão é game over. Não possui check points, depois do game over o jogo volta pro início.
+Quanto maior o número de prédios saltados, mais pontos são somados, o jogador ganha 5 pontos por cada prédio vencido. O jogo só oferece uma vida, ou seja se cair de um prédio e chegar ao chão é game over. Não possui check points, logo, depois do game over o jogo volta para o início.
+
 
 
 
