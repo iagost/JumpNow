@@ -8,8 +8,7 @@ Saltar o maior número de edifícios possíveis.
 
 ## Diagrama de navegação
  
-
- ![Telas](https://drive.google.com/file/d/0B6UtPsgmoYE6Vm51c0RFNVQ5SW8/view) 
+![diagrama](https://user-images.githubusercontent.com/21271921/30037465-73dddb08-9191-11e7-9ecb-359a86552f52.jpg)
 
    
 ## Regras
