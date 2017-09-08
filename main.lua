@@ -107,22 +107,46 @@ local jump = display.newRect(0,0,50,50)
 jump.x = w - 50
 jump.y = 280
 
-local aux = -0.018
+
+local holding = false
+
+local function enterFrameListener()
+    if holding then
+        local vx, vy = player:getLinearVelocity()
+        player:setLinearVelocity( vx, 0 )
+        player:applyLinearImpulse( nil, -0.008, player.x, player.y )
+    else
+        -- Not holding
+        -- Code here
+        -- Code here
+        -- Code here
+    end
+end
+
 
 local function touchAction( event )
 
   if ( event.phase == "began" and player.sensorOverlaps > 0 ) then
         -- Jump procedure here
-      local vx, vy = player:getLinearVelocity()
-      player:setLinearVelocity( vx, 0 )
-       aux = aux + -0.001
-          
-      elseif(event.phase == "ended" and player.sensorOverlaps > 0) then
-          player:applyLinearImpulse( 0.008, aux, player.x, player.y )
-          aux = -0.018
-        end
-    
+      display.getCurrentStage():setFocus( event.target)
+      event.target.isFocus = true;
+      Runtime:addEventListener("enterFrame", enterFrameListener )
+      holding = true
+
+  elseif ( event.target.isFocus ) then
+
+      if (event.phase == "moved") then
+      elseif(event.phase == "ended") then
+            holding = false
+            Runtime:removeEventListener( "enterFrame", enterFrameListener )
+            display.getCurrentStage():setFocus( nil )
+            event.target.isFocus = false
+      end
     end
+    return true
+end 
+    
+         
     jump:addEventListener( "touch", touchAction )
 
     local function sensorCollide( self, event )
