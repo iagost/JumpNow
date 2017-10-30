@@ -17,7 +17,7 @@ system.activate( "multitouch" )
 local w = display.contentWidth
 local h = display.contentHeight
 motionx = 0 -- Variable used to move character along x axis
-speed = 2 -- Set Walking Speed
+speed = 1 -- Set Walking Speed
 
 
 
@@ -28,15 +28,21 @@ local mainGroup
 local uiGroup
 local jump
 local player
+local sheetPlayer
 local rand
-local obstacleNumber
+local buildingNumber
 local holding
 local sheetOptions
 local objectSheet
 local buildingtable = {}
-local newObstacle
+local building
+local buildingCounter = 0
 local width
 local height
+local timerOfCreateBulding
+local timerOfDestroyBulding
+local timerr
+local character
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -101,68 +107,158 @@ function scene:create( event )
 
 objectSheet = graphics.newImageSheet( "imagesheet.png", sheetOptions )
 
+sheetPlayer = {
+	frames = {
+		{
+			x = 0,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 26,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 49,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 90,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+			{
+			x = 110,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 155,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 178,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
 
+
+	}
+}
+
+spritesPlayer = graphics.newImageSheet("spritesheet.png", sheetPlayer )
+
+local sequenceSprite = {
+	{ name="running", frames={2, 3, 4, 5}, time=500, loopCount = 0},
+	{ name="jumping", frames={6, 4}, time=400, loopCount = 1},
+	{ name="droping", frames={7}, time=1000, loopCount = 1},
+}
+	
+function jumpAnimation()
+	 player:setSequence("jumping")
+ 	 player:play()
+end
+
+function runAnimation()
+	 player:setSequence("running")
+ 	 player:play()
+end
+
+function dropAnimation()
+	 player:setSequence("droping")
+ 	 player:play()
+end
 			
 
 local p1 = display.newImageRect(mainGroup, objectSheet, 1, 70, 170)
-p1.x = display.contentWidth-420
+p1.x = display.contentWidth-430
 p1.y = display.contentHeight-90
 p1.objType = "ground"
+table.insert(buildingtable, p1 )
+buildingCounter = buildingCounter + 1
 
  local p2 = display.newImageRect(mainGroup, objectSheet, 2, 70, 190)
  p2.x = display.contentWidth-310
  p2.y = display.contentHeight-115
  p2.objType = "ground"
+ table.insert(buildingtable, p2 )
+ buildingCounter = buildingCounter + 1
 
- local p3 = display.newImageRect(mainGroup, objectSheet, 1, 50, 140)
+ local p3 = display.newImageRect(mainGroup, objectSheet, 1, 70, 140)
  p3.x = display.contentWidth-210
  p3.y = display.contentHeight-90
  p3.objType = "ground"
+ table.insert(buildingtable, p3 )
+ buildingCounter = buildingCounter + 1
 
  local p4 = display.newImageRect(mainGroup, objectSheet, 3, 30, 170)
  p4.x = display.contentWidth-140
  p4.y = display.contentHeight-105
  p4.objType = "ground"
+ table.insert(buildingtable, p4 )
+ buildingCounter = buildingCounter + 1
 
  local p5 = display.newImageRect(mainGroup, objectSheet, 4, 30, 170)
  p5.x = display.contentWidth-100
  p5.y = display.contentHeight-90
  p5.objType = "ground"
+ table.insert(buildingtable, p5 )
+ buildingCounter = buildingCounter + 1
 
  local p6 = display.newImageRect(mainGroup, objectSheet, 1, 60, 120)
  p6.x = display.contentWidth-50
  p6.y = display.contentHeight-80
  p6.objType = "ground"
+ table.insert(buildingtable, p6 )
+ buildingCounter = buildingCounter + 1
 
- local p7 = display.newImageRect(mainGroup, objectSheet, 4, 20, 170)
- p7.x = display.contentWidth-0
- p7.y = display.contentHeight-90
+ local p7 = display.newImageRect(mainGroup, objectSheet, 4, 55, 110)
+ p7.x = display.contentWidth+20
+ p7.y = display.contentHeight-70
  p7.objType = "ground"
-
- local p8 = display.newImageRect(mainGroup, objectSheet, 1, 20, 170)
- p8.x = display.contentWidth+50
+ table.insert(buildingtable, p7 )
+ buildingCounter = buildingCounter + 1
+ local p8 = display.newImageRect(mainGroup, objectSheet, 1, 40, 170)
+ p8.x = display.contentWidth+85
  p8.y = display.contentHeight-90
  p8.objType = "ground"
+ table.insert(buildingtable, p8 )
+ buildingCounter = buildingCounter + 1
 
- local p9 = display.newImageRect(mainGroup, objectSheet, 4, 20, 170)
+ --[[local p9 = display.newImageRect(mainGroup, objectSheet, 4, 20, 170)
  p9.x = display.contentWidth+100
  p9.y = display.contentHeight-90
  p9.objType = "ground"
-
- local plataforma = display.newImageRect("plataforma.png", 1280, 20)
+]]
+ local plataforma = display.newImageRect(mainGroup, "plataforma.png", 1280, 20)
  plataforma.x = display.contentCenterX
  plataforma.y = display.contentHeight-10
  plataforma.objType = "ground"
 
- scoreText = display.newText( score, display.contentCenterX, 20, native.systemFont, 40 )
+ scoreText = display.newText( score, display.contentCenterX, 20, 'Helvetica', 40 )
+ uiGroup:insert(scoreText)
 
- player = display.newImageRect("player.png", 10, 10)
+ --	player = display.newImageRect(uiGroup, spritesPlayer, 7, 15, 15)
+ player = display.newSprite(uiGroup, spritesPlayer, sequenceSprite)
+ player:scale(0.7, 0.7)
  player.x = display.contentWidth-470
  player.y = display.contentHeight-200
  player.myName = "player"
  mainGroup:insert( player )
+ runAnimation()
 
  physics.addBody(plataforma, "static", {bounce=0})
+ 
  physics.addBody(p1, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p2, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p3, "static", {bounce=0.0, friction=0.3})
@@ -171,12 +267,15 @@ p1.objType = "ground"
  physics.addBody(p6, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p7, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p8, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p9, "static", {bounce=0.0, friction=0.3})
- physics.addBody( player, "dynamic", {density=0.030, radius=5, bounce=0.0}, { box={ halfWidth=3, halfHeight=10, x=0, y=2}, isSensor=true })
+ --physics.addBody(p9, "static", {bounce=0.0, friction=0.3})
+
+ physics.addBody( player, "dynamic", {density=0.030, radius=8, bounce=0.0}, { box={ halfWidth=3, halfHeight=10, x=0, y=2}, isSensor=true })
 
  player.isFixedRotation = true
  player.sensorOverlaps = 0
 
+
+--player:player()
 
 holding = false
 
@@ -184,7 +283,7 @@ local function enterFrameListener()
     if holding then
         local vx, vy = player:getLinearVelocity()
         player:setLinearVelocity( vx, 0 )
-        player:applyLinearImpulse( 0.00001, -0.020, player.x, player.y )
+        player:applyLinearImpulse( 0.00000, -0.030, player.x, player.y )
     else
         
     end
@@ -198,8 +297,8 @@ function touchAction( event )
       event.target.isFocus = true;
       holding = true
       Runtime:addEventListener("enterFrame", enterFrameListener )
-      
-
+      jumpAnimation()
+     
   elseif ( event.target.isFocus ) then
 
       if (event.phase == "moved") then
@@ -208,6 +307,7 @@ function touchAction( event )
             Runtime:removeEventListener( "enterFrame", enterFrameListener )
             display.getCurrentStage():setFocus( nil )
             event.target.isFocus = false
+           	dropAnimation()
       end
     end
     return true
@@ -222,53 +322,103 @@ end
         if ( event.phase == "began" ) then
           self.sensorOverlaps = self.sensorOverlaps + 1
           showScore()
+          runAnimation()
         -- Foot sensor has exited a ground object
         elseif ( event.phase == "ended" ) then
         self.sensorOverlaps = self.sensorOverlaps - 1
+        --dropAnimation()
       end
+
     end
   end
 
--- Associate collision handler function with character
+--[[function createCity()
+	transition.to( p7, { time=13000, x=(-100) } )
+	transition.to( p6, { time=11500, x=(-100) } )
+	transition.to( p5, { time=10000, x=(-100) } )
+	transition.to( p4, { time=9500, x=(-100) } )
+	transition.to( p3, { time=8500, x=(-100) } )
+	transition.to( p2, { time=5500, x=(-100) } )
+	transition.to( p1, { time=3000, x=(-100) } )
 
---function  createObstacle( )
---	rand = math.random
-  --  obstacleNumber = rand(4)
+end
+]]
 
-    --if(obstacleNumber == 1) then
-	--	print (obstacleNumber)
-	--	width = 70
-	--	height = 170
-    --elseif(obstacleNumber == 2) then
-      --  print(obstacleNumber)
-        --width = 70
-		--height = 170
-    --elseif( obstacleNumber == 3) then
-      --  print (obstacleNumber)
-        --width = 70
-		--height = 170
-    --elseif( obstacleNumber == 4) then
-     --   print (obstacleNumber)
-       -- width = 70
-		--height = 170
-    --end                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 
-    --newObstacle = display.newImageRect( mainGroup, objectSheet, obstacleNumber, width, height)
-    --newObstacle.x = display.contentWidth+100
-	--newObstacle.y = display.contentHeight-90
-    --table.insert(buildingtable, newObstacle )
-    --physics.addBody(newObstacle, "dynamic", {bounce=0.0, friction=0.3} )
-    --newObstacle.myName = "building"
+function createBuilding()
+	rand = math.random
+  	buildingNumber = rand(4)
 
-    --return newObstacle
+    if(buildingNumber == 1) then
+	
+		width = 70
+		height = 170
+    elseif(buildingNumber == 2) then
+        
+        width = 45
+		height = 140
+    elseif( buildingNumber == 3) then
+        
+        width = 25
+		height = 140
+    elseif( buildingNumber == 4) then
+    
+        width = 55
+		height = 110
+    end                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+    building = display.newImageRect( mainGroup, objectSheet, buildingNumber, width, height)
+    building.x = display.contentWidth+80
+	building.y = display.contentHeight-90
+    table.insert(buildingtable, building )
+    physics.addBody(building, "dynamic", {bounce=0.0, friction=0.3} )
+    building.myName = "building"
+    building.objType = "ground"
+    buildingCounter = buildingCounter + 1
+  --  moveBuilding(building)
+    print(buildingCounter)
+    
+    return building
+end
+--move the buildings
+--function moveBuilding(building)
+
+--	transition.to( building, { time=13000, x=(-100) } )
+	
 --end
+--Remove buldiings from table
+function destroyBuilding()
+	
 
+	 for i = #buildingtable,1,-1 do
+	 	
+	 	if(buildingtable[i].x < -50) then
+	 	
 
+	 		display.remove(buildingtable[i])
+	 		table.remove(buildingtable, i)
+	 		buildingCounter = buildingCounter - 1
+
+	 	end
+	 end
+	print(buildingCounter)
+	
+end
+
+--params for modal
+local options = {
+    isModal = true,
+    effect = "fade",
+    time = 400,
+    params = {
+        sampleVar = "my sample variable"
+    }
+}
 
 function gotoMenu()
-	print(player.y)
 	if(player.y >= 250) then
-    composer.gotoScene( "menu" )
+  		composer.gotoScene( "menu" )
+  		--composer.showOverlay( "game-over", options )
 	end
 end
 
@@ -279,68 +429,51 @@ function showScore()
 end
 
 
-function update( event )
-
+function createCity( event )
 --updateBackgrounds will call a function made specifically to handle the background movement
-    updateobstacles()
+    moveBuilding()
 end
 
-function updateobstacles()
+function moveBuilding()
 
+	for i = 1,#buildingtable,1 do
+	 	local predio = buildingtable[i]
+	 	predio.x = predio.x - 1 
+	 end
     
 
     --background movement
+	--local predio
+	--predio = valorDinamico
 
-    p1.x = p1.x - (1)
-    p2.x = p2.x - (1)
-    p3.x = p3.x - (1)
-    p4.x = p4.x - (1)
-    p5.x = p5.x - (1)
-    p6.x = p6.x - (1)
-    p7.x = p7.x - (1)
-    p8.x = p8.x - (1)
-    p9.x = p9.x - (1)
-
+	--[[if( p1 ~= nil ) then
+	p1.x = p1.x - (1)
+	end
+	if( p2 ~= nil ) then
+		p2.x = p2.x - (1)
+	end
+	if( p3 ~= nil ) then
+		p3.x = p3.x - (1)
+	end
+	if( p4 ~= nil ) then
+		p4.x = p4.x - (1)
+	end
+    if( p5 ~= nil ) then
+		p5.x = p5.x - (1)
+	end
+	if( p6 ~= nil) then
+		p6.x = p6.x - (1)
+	end
+	if( p7 ~= nil) then
+		p7.x = p7.x - (1)
+	end
+]]
     --if the sprite has moved off the screen move it back to the
     --other side so it will move back on
    
-
-    if(p1.x < -50) then
-    	p1.x = display.actualContentWidth
-    end
-
-    if(p2.x < -50) then
-        p2.x = display.actualContentWidth
-    end
-
-    if(p3.x < -50) then
-        p3.x = display.actualContentWidth
-    end
-
-    if(p4.x < -50) then
-        p4.x = display.actualContentWidth
-    end
-
-    if(p5.x < -50) then
-        p5.x = display.actualContentWidth
-    end
-
-    if(p6.x < -50) then
-        p6.x = display.actualContentWidth
-    end
-
-    if(p7.x < -50) then
-        p7.x = display.actualContentWidth
-    end
-
-    if(p8.x < -50) then
-        p8.x = display.actualContentWidth
-    end
-
-    if(p9.x < -50) then
-        p9.x = display.actualContentWidth
-    end
 end
+
+
 
 end
 
@@ -353,7 +486,7 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-
+		
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
 
@@ -362,10 +495,13 @@ function scene:show( event )
 		player.collision = sensorCollide
 		player:addEventListener( "collision" )
 		--Runtime:addEventListener("enterFrame", showScore)
-		--timer.performWithDelay(20000, createObstacle, -1)
-		Runtime:addEventListener("enterFrame", gotoMenu)
-		timer.performWithDelay(1, update, -1)
+		--timerr = timer.performWithDelay(1, createCity, 0)
+		timerr = timer.performWithDelay(1, createCity, -1)
 
+		timerOfCreateBulding = timer.performWithDelay(1500, createBuilding, 0)
+		timerOfDestroyBulding = timer.performWithDelay(4000, destroyBuilding, 0)
+		Runtime:addEventListener("enterFrame", gotoMenu)
+		
 	end
 end
 
@@ -378,16 +514,25 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is on screen (but is about to go off screen)
+	
+	display.remove(backGroup)
+    display.remove(mainGroup)
+    display.remove(uiGroup)
+    timer.cancel( timerOfCreateBulding )
+    timer.cancel( timerOfDestroyBulding )
+    timer.cancel( timerr )
+    
 
 		
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
+		
 		jump:removeEventListener( "touch", touchAction )
 		player:removeEventListener( "collision" )
 		Runtime:removeEventListener("enterFrame", gotoMenu)
 		physics.pause()
-		--composer.removeScene("game")
+		composer.removeScene("game")
 		
 
 	end
@@ -399,6 +544,8 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 	-- Code here runs prior to the removal of scene's view
+	
+	
 
 end
 

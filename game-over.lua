@@ -8,12 +8,12 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-local function gotoGame()
-    composer.gotoScene( "game" )
+local function gotoMenu()
+    composer.gotoScene( "menu" )
 end
  
-local function gotoHighScores()
-    composer.gotoScene( "highscores" )
+local function gotoGame()
+    composer.gotoScene( "game" )
 end
 
 
@@ -30,7 +30,7 @@ function scene:create( event )
 	local sceneGroup = self.view
 	-- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect( sceneGroup, "background_paulo.png", display.actualContentWidth, display.actualContentHeight )
+    local background = display.newImageRect( sceneGroup, "backgroundmenu.png", 300, 300 )
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
