@@ -3,6 +3,8 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
+
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -20,7 +22,7 @@ motionx = 0 -- Variable used to move character along x axis
 speed = 1 -- Set Walking Speed
 
 
-
+local pontuacao = 0
 local score
 local scoreText
 local backGroup
@@ -43,6 +45,12 @@ local timerOfCreateBulding
 local timerOfDestroyBulding
 local timerr
 local character
+local options
+local gameMusic
+local scoreName
+local jumpSound
+local dropSound
+local runningSound
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -160,7 +168,7 @@ spritesPlayer = graphics.newImageSheet("spritesheet.png", sheetPlayer )
 
 local sequenceSprite = {
 	{ name="running", frames={2, 3, 4, 5}, time=500, loopCount = 0},
-	{ name="jumping", frames={6, 4}, time=400, loopCount = 1},
+	{ name="jumping", frames={6, 4}, time=200, loopCount = 1},
 	{ name="droping", frames={7}, time=1000, loopCount = 1},
 }
 	
@@ -179,6 +187,11 @@ function dropAnimation()
  	 player:play()
 end
 			
+--[[local pnew = display.newImageRect("predio6.png", 150,170)
+pnew.x = display.contentWidth-300
+pnew.y = display.contentHeight-90
+pnew.objType = "ground"
+]]
 
 local p1 = display.newImageRect(mainGroup, objectSheet, 1, 70, 170)
 p1.x = display.contentWidth-430
@@ -245,13 +258,16 @@ buildingCounter = buildingCounter + 1
  plataforma.y = display.contentHeight-10
  plataforma.objType = "ground"
 
- scoreText = display.newText( score, display.contentCenterX, 20, 'Helvetica', 40 )
+ scoreName = display.newText("Score: ", display.contentWidth-435, 20, 'Helvetica', 25 )
+ uiGroup:insert(scoreName)
+ scoreText = display.newText(score, display.contentWidth-390, 20, 'Helvetica', 25 )
  uiGroup:insert(scoreText)
 
  --	player = display.newImageRect(uiGroup, spritesPlayer, 7, 15, 15)
  player = display.newSprite(uiGroup, spritesPlayer, sequenceSprite)
  player:scale(0.7, 0.7)
- player.x = display.contentWidth-470
+ player.anchorX = 1;
+ player.x = display.contentWidth-450
  player.y = display.contentHeight-200
  player.myName = "player"
  mainGroup:insert( player )
@@ -266,7 +282,7 @@ buildingCounter = buildingCounter + 1
  physics.addBody(p5, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p6, "static", {bounce=0.0, friction=0.3})
  physics.addBody(p7, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p8, "static", {bounce=0.0, friction=0.3})
+ physics.addBody(p8, "static", {bounce=0.0, friction=100})
  --physics.addBody(p9, "static", {bounce=0.0, friction=0.3})
 
  physics.addBody( player, "dynamic", {density=0.030, radius=8, bounce=0.0}, { box={ halfWidth=3, halfHeight=10, x=0, y=2}, isSensor=true })
@@ -284,6 +300,7 @@ local function enterFrameListener()
         local vx, vy = player:getLinearVelocity()
         player:setLinearVelocity( vx, 0 )
         player:applyLinearImpulse( 0.00000, -0.030, player.x, player.y )
+        
     else
         
     end
@@ -293,12 +310,14 @@ function touchAction( event )
 
   if ( event.phase == "began" and player.sensorOverlaps > 0 ) then
         -- Jump procedure here
+
       display.getCurrentStage():setFocus( event.target)
       event.target.isFocus = true;
       holding = true
       Runtime:addEventListener("enterFrame", enterFrameListener )
       jumpAnimation()
-     
+      audio.play(jumpSound, { channel=3 })
+         
   elseif ( event.target.isFocus ) then
 
       if (event.phase == "moved") then
@@ -317,16 +336,21 @@ end
 
     -- Confirm that the colliding elements are the foot sensor and a ground object
     if ( event.selfElement == 2 and event.other.objType == "ground" ) then
-
+    		audio.play(runningSound, {channel=5})
         -- Foot sensor has entered (overlapped) a ground object
         if ( event.phase == "began" ) then
           self.sensorOverlaps = self.sensorOverlaps + 1
           showScore()
+          
+          audio.play(runningSound, {channel=5})
+          audio.play(dropSound, { channel=3 })
+         	
           runAnimation()
         -- Foot sensor has exited a ground object
         elseif ( event.phase == "ended" ) then
         self.sensorOverlaps = self.sensorOverlaps - 1
         --dropAnimation()
+ 		audio.stop(5)
       end
 
     end
@@ -405,28 +429,25 @@ function destroyBuilding()
 	
 end
 
---params for modal
-local options = {
-    isModal = true,
-    effect = "fade",
-    time = 400,
-    params = {
-        sampleVar = "my sample variable"
-    }
-}
 
-function gotoMenu()
+--params for modal
+	
+
+
+
+function endGame()
 	if(player.y >= 250) then
-  		composer.gotoScene( "menu" )
-  		--composer.showOverlay( "game-over", options )
+	composer.setVariable( "lastScore", score )	
+  	composer.gotoScene( "game-over", options )
+  	--	composer.showOverlay( "game-over", options )
 	end
 end
 
 function showScore()
 	score = score + 1
 	scoreText.text = score
-
 end
+
 
 
 function createCity( event )
@@ -472,8 +493,24 @@ function moveBuilding()
     --other side so it will move back on
    
 end
+ 	gameMusic = audio.loadStream("audio/Locked_Out.mp3")  
+   audio.reserveChannels( 2 )
+   audio.setVolume(0.03, {channel=2})
+   audio.play(gameMusic, { channel=2, loops=-1 })
 
 
+    
+    	jumpSound = audio.loadSound("audio/audio_pulando.mp3")
+    	audio.reserveChannels(3)
+    	--audio.play(jumpSound, { channel=3 })
+
+    	dropSound = audio.loadSound("audio/audio_caindo.mp3")
+    	audio.reserveChannels(4)
+
+    	runningSound = audio.loadSound("audio/audio_correndo.mp3")
+    	audio.reserveChannels(5)
+
+   
 
 end
 
@@ -500,8 +537,8 @@ function scene:show( event )
 
 		timerOfCreateBulding = timer.performWithDelay(1500, createBuilding, 0)
 		timerOfDestroyBulding = timer.performWithDelay(4000, destroyBuilding, 0)
-		Runtime:addEventListener("enterFrame", gotoMenu)
-		
+		Runtime:addEventListener("enterFrame", endGame)
+			
 	end
 end
 
@@ -527,14 +564,15 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
-		
+		audio.stop(2)
+		audio.stop(5)
 		jump:removeEventListener( "touch", touchAction )
 		player:removeEventListener( "collision" )
-		Runtime:removeEventListener("enterFrame", gotoMenu)
+		Runtime:removeEventListener("enterFrame", endGame)
 		physics.pause()
 		composer.removeScene("game")
-		
 
+		
 	end
 end
 

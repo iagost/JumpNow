@@ -17,11 +17,11 @@ local function gotoHighScores()
 end
 
 
+local menuSound
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
-
-
 
 
 -- create()
@@ -48,6 +48,9 @@ function scene:create( event )
 
     playButton:addEventListener("tap", gotoGame)
 
+    menuSound = audio.loadStream("audio/River_Flow.mp3")
+    audio.reserveChannels( 1 )
+    audio.play(menuSound, { channel=1, loops=-1 })
     
 
 end
@@ -61,7 +64,7 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-
+		
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
 
@@ -80,7 +83,8 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
-
+		audio.stop(1)
+		composer.removeScene("menu")
 	end
 end
 

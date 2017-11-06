@@ -3,26 +3,30 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
+
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-local function gotoMenu()
-    composer.gotoScene( "menu" )
-end
- 
 local function gotoGame()
     composer.gotoScene( "game" )
+end
+ 
+local function gotoMenu()
+    composer.gotoScene( "menu" )
 end
 
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
--- -----------------------------------------------------------------------------------
-
-
-
+-- -------------------
+local params
+local lastScore = composer.getVariable( "lastScore")
+local buttonRetry
+local buttonMenu
+local playerGameOver
 
 -- create()
 function scene:create( event )
@@ -30,26 +34,38 @@ function scene:create( event )
 	local sceneGroup = self.view
 	-- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect( sceneGroup, "backgroundmenu.png", 300, 300 )
-    background.x = display.contentCenterX
-    background.y = display.contentCenterY
 
-   -- local title = display.newImageRect( sceneGroup, "title.png", 300, 50 )
-    --title.x = display.contentCenterX
-    --title.y = 50
+	gameOverGroup = display.newGroup()    -- Display group for UI objects like the score
+    sceneGroup:insert( gameOverGroup )  
 
-    local playButton = display.newImageRect( sceneGroup, "botao_start.png", 130, 70 )
-    playButton.x = display.contentCenterX
-    playButton.y = 200
-   -- playButton:setFillColor( 0.82, 0.86, 1 )
- 
-    --local highScoresButton = display.newText( sceneGroup, "High Scores", display.contentCenterX, 200, native.systemFont, 44 )
-    --highScoresButton:setFillColor( 0.75, 0.78, 1 )
+    local backgroundOverlay = display.newImageRect(gameOverGroup, "backgroundgameover.png", display.actualContentWidth, display.actualContentHeight )
+    backgroundOverlay.x = display.contentCenterX
+    backgroundOverlay.y = display.contentCenterY
 
-    playButton:addEventListener("tap", gotoGame)
 
-    
+    --local gameOver = display.newText("Game Over", display.contentCenterX, 40, 'Helvetica', 50 )
+    --gameOverGroup:insert(gameOver)
+    --gameOver:setFillColor(black)
+    local stringResult = "Your Score was " .. lastScore .. " points"
 
+    local scoreResult = display.newText(stringResult, display.contentCenterX, 40, 'Helvetica', 50 )
+    scoreResult:setFillColor(black)
+	gameOverGroup:insert(scoreResult)
+
+	buttonRetry = display.newImageRect(gameOverGroup, "retry.png", 70, 70)
+	buttonRetry.x = display.contentWidth-150
+	buttonRetry.y = display.contentHeight-60
+
+	buttonMenu = display.newImageRect(gameOverGroup, "menu.png", 70, 70)
+	buttonMenu.x = display.contentWidth-300
+	buttonMenu.y = display.contentHeight-60
+
+	playerGameOver = display.newImageRect(gameOverGroup, "player-gameOver.png", 100, 100)
+	playerGameOver.x = display.contentCenterX
+	playerGameOver.y = display.contentHeight-160
+
+	
+   
 end
 
 
@@ -62,8 +78,13 @@ function scene:show( event )
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
 
+		buttonRetry:addEventListener("tap", gotoGame)
+		buttonMenu:addEventListener("tap", gotoMenu)
+
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
+
+		
 
 	end
 end
@@ -74,12 +95,16 @@ function scene:hide( event )
 
 	local sceneGroup = self.view
 	local phase = event.phase
+	local parent = event.parent
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is on screen (but is about to go off screen)
+		display.remove(sceneGroup)
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
+		composer.removeScene("game-over")
+		
 
 	end
 end
