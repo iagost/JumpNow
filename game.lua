@@ -258,16 +258,16 @@ buildingCounter = buildingCounter + 1
  plataforma.y = display.contentHeight-10
  plataforma.objType = "ground"
 
- scoreName = display.newText("Score: ", display.contentWidth-435, 20, 'Helvetica', 25 )
+ scoreName = display.newText("Score: ", display.contentWidth-433, 20, 'Helvetica', 25 )
  uiGroup:insert(scoreName)
- scoreText = display.newText(score, display.contentWidth-390, 20, 'Helvetica', 25 )
+ scoreText = display.newText(score, display.contentWidth-388, 20, 'Helvetica', 25 )
  uiGroup:insert(scoreText)
 
  --	player = display.newImageRect(uiGroup, spritesPlayer, 7, 15, 15)
  player = display.newSprite(uiGroup, spritesPlayer, sequenceSprite)
  player:scale(0.7, 0.7)
  player.anchorX = 1;
- player.x = display.contentWidth-450
+ player.x = display.contentWidth-430
  player.y = display.contentHeight-200
  player.myName = "player"
  mainGroup:insert( player )
@@ -275,14 +275,14 @@ buildingCounter = buildingCounter + 1
 
  physics.addBody(plataforma, "static", {bounce=0})
  
- physics.addBody(p1, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p2, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p3, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p4, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p5, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p6, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p7, "static", {bounce=0.0, friction=0.3})
- physics.addBody(p8, "static", {bounce=0.0, friction=100})
+ physics.addBody(p1, "dynamic", {bounce=0.0, friction=0})
+ physics.addBody(p2, "dynamic", {bounce=0.0, friction=0})
+ physics.addBody(p3, "static", {bounce=0.0, friction=0})
+ physics.addBody(p4, "static", {bounce=0.0, friction=0})
+ physics.addBody(p5, "static", {bounce=0.0, friction=0})
+ physics.addBody(p6, "static", {bounce=0.0, friction=0})
+ physics.addBody(p7, "static", {bounce=0.0, friction=0})
+ physics.addBody(p8, "static", {bounce=0.0, friction=0})
  --physics.addBody(p9, "static", {bounce=0.0, friction=0.3})
 
  physics.addBody( player, "dynamic", {density=0.030, radius=8, bounce=0.0}, { box={ halfWidth=3, halfHeight=10, x=0, y=2}, isSensor=true })
@@ -327,6 +327,7 @@ function touchAction( event )
             display.getCurrentStage():setFocus( nil )
             event.target.isFocus = false
            	dropAnimation()
+           	audio.stop(3)
       end
     end
     return true
@@ -336,20 +337,20 @@ end
 
     -- Confirm that the colliding elements are the foot sensor and a ground object
     if ( event.selfElement == 2 and event.other.objType == "ground" ) then
-    		audio.play(runningSound, {channel=5})
+    		--audio.play(runningSound, {channel=5})
         -- Foot sensor has entered (overlapped) a ground object
         if ( event.phase == "began" ) then
           self.sensorOverlaps = self.sensorOverlaps + 1
           showScore()
           
           audio.play(runningSound, {channel=5})
-          audio.play(dropSound, { channel=3 })
-         	
+          audio.play(dropSound, { channel=4 })
           runAnimation()
         -- Foot sensor has exited a ground object
         elseif ( event.phase == "ended" ) then
         self.sensorOverlaps = self.sensorOverlaps - 1
         --dropAnimation()
+ 		audio.stop(4)
  		audio.stop(5)
       end
 
@@ -395,7 +396,7 @@ function createBuilding()
     building.x = display.contentWidth+80
 	building.y = display.contentHeight-90
     table.insert(buildingtable, building )
-    physics.addBody(building, "dynamic", {bounce=0.0, friction=0.3} )
+    physics.addBody(building, "dynamic", {bounce=0.0, friction=0} )
     building.myName = "building"
     building.objType = "ground"
     buildingCounter = buildingCounter + 1
@@ -459,7 +460,17 @@ function moveBuilding()
 
 	for i = 1,#buildingtable,1 do
 	 	local predio = buildingtable[i]
-	 	predio.x = predio.x - 1 
+	 	if(score < 30)then
+	 	predio.x = predio.x - 1
+	 end
+	 	if(score >= 30)then
+	 	predio.x = predio.x - 1.2
+	 end
+	 if(score > 70)then
+	 	predio.x = predio.x - 1.3
+	 end
+
+
 	 end
     
 
@@ -500,14 +511,14 @@ end
 
 
     
-    	jumpSound = audio.loadSound("audio/audio_pulando.mp3")
+    	jumpSound = audio.loadStream("audio/audio_pulando.wav")
     	audio.reserveChannels(3)
     	--audio.play(jumpSound, { channel=3 })
 
-    	dropSound = audio.loadSound("audio/audio_caindo.mp3")
+    	dropSound = audio.loadStream("audio/audio_caindo.wav")
     	audio.reserveChannels(4)
 
-    	runningSound = audio.loadSound("audio/audio_correndo.mp3")
+    	runningSound = audio.loadStream("audio/audio_correndo.wav")
     	audio.reserveChannels(5)
 
    
