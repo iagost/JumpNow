@@ -51,6 +51,7 @@ local scoreName
 local jumpSound
 local dropSound
 local runningSound
+local playerImpulse = 0.00000
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -280,17 +281,17 @@ buildingCounter = buildingCounter + 1
  physics.addBody(p3, "static", {bounce=0.0, friction=0})
  physics.addBody(p4, "static", {bounce=0.0, friction=0})
  physics.addBody(p5, "static", {bounce=0.0, friction=0})
- physics.addBody(p6, "static", {bounce=0.0, friction=0})
- physics.addBody(p7, "static", {bounce=0.0, friction=0})
+ physics.addBody(p6, "dynamic", {bounce=0.0, friction=0})
+ physics.addBody(p7, "dynamic", {bounce=0.0, friction=0})
  physics.addBody(p8, "static", {bounce=0.0, friction=0})
  --physics.addBody(p9, "static", {bounce=0.0, friction=0.3})
 
- physics.addBody( player, "dynamic", {density=0.030, radius=8, bounce=0.0}, { box={ halfWidth=3, halfHeight=10, x=0, y=2}, isSensor=true })
+ physics.addBody( player, "dynamic", {density=0.030, radius=8, bounce=0.0}, { box={ halfWidth=3, halfHeight=8, x=-10, y=1}, isSensor=false})
 
  player.isFixedRotation = true
  player.sensorOverlaps = 0
 
-
+--physics.setDrawMode("hybrid")
 --player:player()
 
 holding = false
@@ -299,7 +300,7 @@ local function enterFrameListener()
     if holding then
         local vx, vy = player:getLinearVelocity()
         player:setLinearVelocity( vx, 0 )
-        player:applyLinearImpulse( 0.00000, -0.030, player.x, player.y )
+        player:applyLinearImpulse( playerImpulse, -0.030, player.x, player.y )
         
     else
         
@@ -317,6 +318,9 @@ function touchAction( event )
       Runtime:addEventListener("enterFrame", enterFrameListener )
       jumpAnimation()
       audio.play(jumpSound, { channel=3 })
+      if(player.y == 20)then
+      	holding = false
+      end
          
   elseif ( event.target.isFocus ) then
 
@@ -350,6 +354,7 @@ end
         elseif ( event.phase == "ended" ) then
         self.sensorOverlaps = self.sensorOverlaps - 1
         --dropAnimation()
+
  		audio.stop(4)
  		audio.stop(5)
       end
@@ -437,7 +442,7 @@ end
 
 
 function endGame()
-	if(player.y >= 250) then
+	if(player.y >= 250 or player.x < -50) then
 	composer.setVariable( "lastScore", score )	
   	composer.gotoScene( "game-over", options )
   	--	composer.showOverlay( "game-over", options )
@@ -465,9 +470,15 @@ function moveBuilding()
 	 end
 	 	if(score >= 30)then
 	 	predio.x = predio.x - 1.2
+	 	playerImpulse = 0.000008
 	 end
 	 if(score > 70)then
 	 	predio.x = predio.x - 1.3
+	 	playerImpulse = 0.00001
+	 end
+	  if(score > 100)then
+	 	predio.x = predio.x - 1.4
+	 	playerImpulse = 000001.5
 	 end
 
 

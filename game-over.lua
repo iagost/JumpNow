@@ -38,7 +38,7 @@ function scene:create( event )
 	gameOverGroup = display.newGroup()    -- Display group for UI objects like the score
     sceneGroup:insert( gameOverGroup )  
 
-    local backgroundOverlay = display.newImageRect(gameOverGroup, "backgroundgameover.png", display.actualContentWidth, display.actualContentHeight )
+    local backgroundOverlay = display.newImageRect(gameOverGroup, "fundo-gameover.png", display.actualContentWidth, display.actualContentHeight )
     backgroundOverlay.x = display.contentCenterX
     backgroundOverlay.y = display.contentCenterY
 
@@ -48,7 +48,8 @@ function scene:create( event )
     --gameOver:setFillColor(black)
     local stringResult = "Your Score was " .. lastScore .. " points"
 
-    local scoreResult = display.newText(stringResult, display.contentCenterX, 40, 'Helvetica', 50 )
+    local scoreResult = display.newText(stringResult, display.contentCenterX, 20, 'Helvetica', 50 )
+    scoreResult.y = 30
     scoreResult:setFillColor(black)
 	gameOverGroup:insert(scoreResult)
 

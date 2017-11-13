@@ -12,13 +12,14 @@ local function gotoGame()
     composer.gotoScene( "game" )
 end
  
-local function gotoHighScores()
-    composer.gotoScene( "highscores" )
-end
+
 
 
 local menuSound
-
+local player
+local sheetPlayer
+local spritesPlayer
+local timerr
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -30,22 +31,107 @@ function scene:create( event )
 	local sceneGroup = self.view
 	-- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect( sceneGroup, "background_paulo.png", display.actualContentWidth, display.actualContentHeight )
+    local background = display.newImageRect( sceneGroup, "fundo-menu.png", display.actualContentWidth, display.actualContentHeight )
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-   -- local title = display.newImageRect( sceneGroup, "title.png", 300, 50 )
+     local plataforma = display.newImageRect(sceneGroup, "plataforma.png", 1280, 20)
+ 	plataforma.x = display.contentCenterX
+ 	plataforma.y = display.contentHeight-10
+ 	plataforma.objType = "ground"
+    -- local title = display.newImageRect( sceneGroup, "title.png", 300, 50 )
     --title.x = display.contentCenterX
     --title.y = 50
 
-    local playButton = display.newImageRect( sceneGroup, "botao_start.png", 130, 70 )
+    local playButton = display.newImageRect( sceneGroup, "play.png", 100, 80 )
     playButton.x = display.contentCenterX
     playButton.y = 200
-   -- playButton:setFillColor( 0.82, 0.86, 1 )
- 
-    --local highScoresButton = display.newText( sceneGroup, "High Scores", display.contentCenterX, 200, native.systemFont, 44 )
-    --highScoresButton:setFillColor( 0.75, 0.78, 1 )
+  	
 
+  	
+
+sheetPlayer = {
+	frames = {
+		{
+			x = 0,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 26,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 49,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 90,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+			{
+			x = 110,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 155,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+		{
+			x = 178,
+			y = 0,
+			width = 25,
+			height = 30,
+		},
+
+
+	}
+}
+
+spritesPlayer = graphics.newImageSheet("spritesheet.png", sheetPlayer )
+
+local sequenceSprite = {
+	{ name="running", frames={2, 3, 4, 5}, time=500, loopCount = 0},
+	{ name="jumping", frames={6, 4}, time=200, loopCount = 1},
+	{ name="droping", frames={7}, time=1000, loopCount = 1},
+}
+
+
+function runAnimation()
+	 player:setSequence("running")
+ 	 player:play()
+end
+
+ player = display.newSprite(sceneGroup, spritesPlayer, sequenceSprite)
+ player:scale(1, 1)
+ player.anchorX = 1;
+ player.x = display.contentWidth-500
+ player.y = display.contentHeight-31
+ player.myName = "player"
+ runAnimation()
+
+ function movePlayer()
+  	
+  	player.x = player.x + 1
+  	if(player.x == 600)then
+  		print("entrei")
+  		player.x = -50
+  	end
+  	
+  end 
+
+--audio menu
     playButton:addEventListener("tap", gotoGame)
 
     menuSound = audio.loadStream("audio/River_Flow.mp3")
@@ -67,6 +153,7 @@ function scene:show( event )
 		
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
+		timerr = timer.performWithDelay(1, movePlayer, 0)
 
 	end
 end
@@ -84,6 +171,7 @@ function scene:hide( event )
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
 		audio.stop(1)
+		timer.cancel(timerr)
 		composer.removeScene("menu")
 	end
 end
