@@ -27,6 +27,7 @@ local lastScore = composer.getVariable( "lastScore")
 local buttonRetry
 local buttonMenu
 local playerGameOver
+local gameOverMusic
 
 -- create()
 function scene:create( event )
@@ -69,6 +70,12 @@ function scene:create( event )
 	playerGameOver.x = display.contentCenterX
 	playerGameOver.y = display.contentHeight-130
 
+
+   gameOverMusic = audio.loadStream("audio/Cool_Rock_Take_the_Lead.mp3")  
+   audio.reserveChannels( 6 )
+   audio.setVolume(0.1, {channel=6})
+   audio.play(gameOverMusic, { channel=6, loops=-1 })
+
 	
    
 end
@@ -108,6 +115,7 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
+		audio.stop(6)
 		composer.removeScene("game-over")
 		
 

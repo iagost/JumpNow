@@ -62,7 +62,7 @@ local timerCreateCamera
 local timerMoveCamera
 local timerDestroyCamera
 local flash
-
+local soundFlash
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -218,7 +218,7 @@ p1.objType = "ground"
 table.insert(buildingtable, p1 )
 buildingCounter = buildingCounter + 1
 
- local p2 = display.newImageRect(mainGroup, objectSheet, 2, 70, 190)
+ local p2 = display.newImageRect(mainGroup, objectSheet, 2, 70, 180)
  p2.x = display.contentWidth-310
  p2.y = display.contentHeight-115
  p2.objType = "ground"
@@ -292,7 +292,7 @@ buildingCounter = buildingCounter + 1
  player = display.newSprite(uiGroup, spritesPlayer, sequenceSprite)
  player:scale(0.7, 0.7)
  player.anchorX = 1;
- player.x = display.contentWidth-430
+ player.x = display.contentWidth-300
  player.y = display.contentHeight-200
  player.myName = "player"
  mainGroup:insert( player )
@@ -541,7 +541,7 @@ end
 function moveCamera( )
 	for i = 1,#cameraTable, 1 do
 		local cam = cameraTable[i]
-		transition.to( cam, { time=6000, x=-100} )
+		transition.to( cam, { time=4000, x=-100} )
 	end
 end
 
@@ -609,7 +609,7 @@ function collisionCam( event )
 		if((obj1.myName == "player" and obj2.myName == "camera") or (obj1.myName == "camera" and obj2.myName == "player"))then
 			
 			flash.alpha = 1
-
+			audio.play(soundFlash)
 		end
 	else
 		flash.alpha = 0
@@ -619,9 +619,9 @@ end
 
 
 
-   gameMusic = audio.loadStream("audio/Locked_Out.mp3")  
+   gameMusic = audio.loadStream("audio/Not_Too_Cray.mp3")  
    audio.reserveChannels( 2 )
-   audio.setVolume(0.03, {channel=2})
+   audio.setVolume(0.1, {channel=2})
    audio.play(gameMusic, { channel=2, loops=-1 })
 
 
@@ -635,6 +635,10 @@ end
 
     	runningSound = audio.loadStream("audio/audio_correndo.wav")
     	audio.reserveChannels(5)
+
+    	soundFlash = audio.loadStream("audio/somFlash")
+    	audio.reserveChannels(7)
+    	audio.setVolume(1,{channel=7})
 
 
     function moveOlofote( )
@@ -669,8 +673,8 @@ function scene:show( event )
 		timerOfCreateBulding = timer.performWithDelay(1500, createBuilding, 0)
 		timerOfDestroyBulding = timer.performWithDelay(4000, destroyBuilding, 0)
 		Runtime:addEventListener("enterFrame", endGame)
-		timerCreateCamera = timer.performWithDelay(6000, createCamera, 0)
-		timerMoveCamera = timer.performWithDelay(7000, moveCamera, 0)
+		timerCreateCamera = timer.performWithDelay(3000, createCamera, 0)
+		timerMoveCamera = timer.performWithDelay(4000, moveCamera, 0)
 		timerDestroyCamera = timer.performWithDelay(1000, destroyCamera, 0)
 		Runtime:addEventListener("collision", collisionCam)
 
@@ -704,6 +708,7 @@ function scene:hide( event )
 		-- Code here runs immediately after the scene goes entirely off screen
 		audio.stop(2)
 		audio.stop(5)
+		audio.stop(7)
 		jump:removeEventListener( "touch", touchAction )
 		player:removeEventListener( "collision" )
 		Runtime:removeEventListener("enterFrame", endGame)
