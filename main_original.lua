@@ -16,10 +16,10 @@ local h = display.contentHeight
  
 
 
- local background = display.newImageRect("background2.png", 1920, 1280)
+local background = display.newImageRect("background2.png", 1920, 1280)
 background.x = display.contentCenterX
 background.y = display.contentCenterY
- local jump = display.newImageRect("fundo_transparente.png", 1280, 720)
+local jump = display.newImageRect("fundo_transparente.png", 1280, 720)
  
 
 

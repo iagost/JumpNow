@@ -20,6 +20,10 @@ local player
 local sheetPlayer
 local spritesPlayer
 local timerr
+local olofote1
+local olofote2
+local reverse = 0
+local timerOlofote
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -35,6 +39,10 @@ function scene:create( event )
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
+     local name = display.newImageRect( sceneGroup, "name.png", 500, 100 )
+    name.x = display.contentCenterX
+    name.y = 60
+
      local plataforma = display.newImageRect(sceneGroup, "plataforma.png", 1280, 20)
  	plataforma.x = display.contentCenterX
  	plataforma.y = display.contentHeight-10
@@ -45,8 +53,20 @@ function scene:create( event )
 
     local playButton = display.newImageRect( sceneGroup, "play.png", 100, 80 )
     playButton.x = display.contentCenterX
-    playButton.y = 200
-  	
+    playButton.y = 175
+
+  
+
+  olofote1 = display.newImageRect(sceneGroup, "yelowLight.png", 50, 2000 ) 
+  olofote1.x = display.contentCenterX
+  olofote1.y = display.contentCenterY + 300
+  olofote1.alpha = 0.2
+
+olofote2 = display.newImageRect(sceneGroup,  "yelowLight.png", 50, 2000 ) 
+  olofote2.x = display.contentCenterX
+  olofote2.y = display.contentCenterY + 300
+  olofote2.alpha = 0.2  
+
 
   	
 
@@ -121,15 +141,19 @@ end
  player.myName = "player"
  runAnimation()
 
+
  function movePlayer()
   	
   	player.x = player.x + 1
   	if(player.x == 600)then
   		print("entrei")
   		player.x = -50
+  		
   	end
   	
   end 
+
+ 
 
 --audio menu
     playButton:addEventListener("tap", gotoGame)
@@ -138,6 +162,22 @@ end
     audio.reserveChannels( 1 )
     audio.play(menuSound, { channel=1, loops=-1 })
     
+   function rolateOlofote()
+    if ( reverse == 0 ) then
+        reverse = 1
+        transition.to( olofote1, { rotation=-20, time=1500, transition=easing.inOutCubic } )
+        transition.to( olofote2, { rotation=20, time=1500, transition=easing.inOutCubic } )
+         transition.to( olofote3, { rotation=-20, time=1500, transition=easing.inOutCubic } )
+        transition.to( olofote4, { rotation=20, time=1500, transition=easing.inOutCubic } )
+    else
+        reverse = 0
+        transition.to( olofote1, { rotation=20, time=1500, transition=easing.inOutCubic } )
+        transition.to( olofote2, { rotation=-20, time=1500, transition=easing.inOutCubic } )
+         transition.to( olofote3, { rotation=-20, time=1500, transition=easing.inOutCubic } )
+        transition.to( olofote4, { rotation=20, time=1500, transition=easing.inOutCubic } )
+    end
+end
+
 
 end
 
@@ -150,10 +190,12 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-		
+			timerOlofote = timer.performWithDelay( 2000, rolateOlofote, 0 )
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
+
 		timerr = timer.performWithDelay(1, movePlayer, 0)
+	
 
 	end
 end
@@ -172,6 +214,7 @@ function scene:hide( event )
 		-- Code here runs immediately after the scene goes entirely off screen
 		audio.stop(1)
 		timer.cancel(timerr)
+		timer.cancel(timerOlofote)
 		composer.removeScene("menu")
 	end
 end

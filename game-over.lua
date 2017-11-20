@@ -42,16 +42,20 @@ function scene:create( event )
     backgroundOverlay.x = display.contentCenterX
     backgroundOverlay.y = display.contentCenterY
 
+    local gameOver = display.newImageRect( gameOverGroup, "gameOver.png", 500, 100 )
+    gameOver.x = display.contentCenterX
+    gameOver.y = 60
 
-    --local gameOver = display.newText("Game Over", display.contentCenterX, 40, 'Helvetica', 50 )
-    --gameOverGroup:insert(gameOver)
-    --gameOver:setFillColor(black)
-    local stringResult = "Your Score was " .. lastScore .. " points"
+    local score = display.newText(lastScore, display.contentCenterX, 40, 'zrnic', 50 )
+    score.y = 130
+    gameOverGroup:insert(score)
+   
+  	--local stringResult = "Your Score was " .. lastScore .. " points"
 
-    local scoreResult = display.newText(stringResult, display.contentCenterX, 20, 'Helvetica', 50 )
-    scoreResult.y = 30
-    scoreResult:setFillColor(black)
-	gameOverGroup:insert(scoreResult)
+   -- local scoreResult = display.newText(stringResult, display.contentCenterX, 20, 'Helvetica', 50 )
+ --   scoreResult.y = 30
+   -- scoreResult:setFillColor(black)
+	--gameOverGroup:insert(scoreResult)
 
 	buttonRetry = display.newImageRect(gameOverGroup, "retry.png", 70, 70)
 	buttonRetry.x = display.contentWidth-150
@@ -63,7 +67,7 @@ function scene:create( event )
 
 	playerGameOver = display.newImageRect(gameOverGroup, "player-gameOver.png", 100, 100)
 	playerGameOver.x = display.contentCenterX
-	playerGameOver.y = display.contentHeight-160
+	playerGameOver.y = display.contentHeight-130
 
 	
    
